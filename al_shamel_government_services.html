@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز الشامل لتخليص المعاملات الحكومية - دولة قطر</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cairo Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- QR Code Generator JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        maroon: {
+                            50: '#fdf2f4',
+                            100: '#fbe5e9',
+                            200: '#f7ced6',
+                            300: '#f2a8b7',
+                            400: '#ea7890',
+                            500: '#de4768',
+                            600: '#c72b4f',
+                            700: '#a71f3f',
+                            800: '#8b1d38',
+                            900: '#701c34',
+                            950: '#4a0b1e',
+                        },
+                        gold: {
+                            50: '#fffbe6',
+                            100: '#fff4b3',
+                            200: '#ffeb80',
+                            300: '#ffe14d',
+                            400: '#ffd71a',
+                            500: '#d4af37',
+                            600: '#aa8817',
+                            700: '#80620f',
+                            800: '#553f08',
+                            900: '#2b1f02',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f172a;
+            color: #334155;
+        }
+
+        .maroon-gradient {
+            background: linear-gradient(135deg, #701c34 0%, #4a0b1e 100%);
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #f3e08c 0%, #d4af37 50%, #aa7c11 100%);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fceabb 0%, #f8b500 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .online-glow {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -5px rgba(112, 28, 52, 0.08);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px -10px rgba(112, 28, 52, 0.2);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #701c34;
+            border-radius: 4px;
+        }
+
+        /* Printing Adjustments */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                color: black !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                border: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+            .page-break {
+                page-break-inside: avoid;
+            }
+            .grid {
+                display: grid !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-white min-h-screen py-0 md:py-8">
+
+    <!-- Toast Notification Box -->
+    <div id="toast" class="no-print fixed bottom-5 left-5 z-50 transform translate-y-10 opacity-0 pointer-events-none bg-slate-900 text-amber-400 px-5 py-3 rounded-xl shadow-2xl border border-amber-500/40 flex items-center gap-3 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage" class="text-xs md:text-sm font-bold text-white">تم العملية بنجاح!</span>
+    </div>
+
+    <!-- Sticky Control Header Bar (No Print) -->
+    <header class="no-print sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md text-white py-3 px-4 shadow-xl border-b border-amber-500/40">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <div class="flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <div>
+                    <h1 class="font-extrabold text-sm md:text-base text-amber-400">مركز الشامل لتخليص المعاملات الحكومية</h1>
+                    <p class="text-xs text-slate-400">خدمات حضورية وإنجاز معاملات عن بُعد / أونلاين</p>
+                </div>
+            </div>
+
+            <!-- Search Bar inside control bar -->
+            <div class="relative w-full md:w-80">
+                <input type="text" id="searchInput" onkeyup="filterServices()" placeholder="بحث سريع في جميع الخدمات والوزارات..." 
+                       class="w-full bg-slate-800 text-white text-xs md:text-sm rounded-xl pl-4 pr-10 py-2.5 border border-slate-700 focus:outline-none focus:border-amber-500 transition shadow-inner">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-slate-400 text-xs"></i>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a href="#onlineServiceSection" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-110 text-slate-950 font-extrabold py-2 px-4 rounded-lg flex items-center gap-2 transition text-xs md:text-sm shadow-md">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>طلب أونلاين</span>
+                </a>
+                <button onclick="copyContactInfo()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2 px-3.5 rounded-lg border border-amber-500/30 flex items-center gap-1.5 transition text-xs md:text-sm" title="نسخ الرقم">
+                    <i class="fa-solid fa-copy"></i>
+                    <span class="hidden sm:inline">نسخ الرقم</span>
+                </button>
+                <button onclick="window.print()" class="maroon-gradient hover:brightness-125 text-white font-black py-2 px-4 rounded-lg shadow-lg flex items-center gap-2 transition text-xs md:text-sm border border-amber-500/30">
+                    <i class="fa-solid fa-print text-amber-400"></i>
+                    <span>طباعة / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container Card -->
+    <div class="print-container max-w-7xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-amber-500/20 my-0 md:my-4">
+
+        <!-- Top Header Banner -->
+        <div class="maroon-gradient text-white relative overflow-hidden px-6 py-10 md:py-14 border-b-8 border-amber-500">
+            <!-- Background Decorative Elements -->
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute right-1/3 top-0 w-full h-full bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-right">
+                
+                <!-- Main Title & Branding -->
+                <div class="flex-1 space-y-3">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs md:text-sm font-bold border border-amber-400/30 shadow-inner">
+                        <i class="fa-solid fa-award text-amber-400"></i>
+                        <span>إنجاز سريع • دقة عالية • خدمة أونلاين 100%</span>
+                    </div>
+
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                        مركز <span class="gold-gradient-text drop-shadow-md">الشامل</span> لتخليص المعاملات
+                    </h1>
+                    
+                    <p class="text-slate-200 text-sm md:text-lg max-w-2xl font-medium leading-relaxed">
+                        وجهتكم الأولى والخيـار الأفضل لإنجاز كافة المعاملات والخدمات الإلكترونية لدى جميع الوزارات والهيئات والمؤسسات الحكومية والخاصة في دولة قطر (حضوريًا وعن بُعد).
+                    </p>
+                </div>
+
+                <!-- Contact Badge Header Card -->
+                <div class="bg-slate-950/40 backdrop-blur-md p-6 rounded-2xl border-2 border-amber-500/40 flex flex-col items-center justify-center min-w-[280px] shadow-2xl">
+                    <div class="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl mb-3 shadow-inner">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <span class="text-xs text-amber-200/80 font-bold uppercase tracking-wider mb-1">خدمة العملاء والاستفسار المباشر</span>
+                    <a href="tel:+97470340999" class="text-2xl font-black text-white tracking-widest gold-gradient-text hover:underline" dir="ltr" style="unicode-bidi: isolate;">
+                        +974 70340999
+                    </a>
+                    <span class="text-xs text-amber-300 mt-2 font-bold bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30">
+                        <i class="fa-solid fa-clock text-[10px] ml-1"></i> نعتز بخدمتكم على مدار الساعة
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- NEW HIGHLIGHTED FEATURE SECTION: Online Transactions (إنجاز المعاملات أونلاين) -->
+        <section id="onlineServiceSection" class="p-6 md:p-10 bg-gradient-to-br from-slate-900 via-slate-950 to-maroon-950 text-white border-b-8 border-amber-500 relative overflow-hidden page-break">
+            <!-- Decorative Glow -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="max-w-6xl mx-auto space-y-8 relative z-10">
+                
+                <!-- Section Title Banner -->
+                <div class="text-center space-y-3">
+                    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs md:text-sm font-bold">
+                        <i class="fa-solid fa-wifi animate-pulse"></i>
+                        <span>دون الحاجة لزيارة المقر - خيارات مرنة وسريعة</span>
+                    </div>
+                    <h2 class="text-2xl md:text-4xl font-black gold-gradient-text">
+                        خدمة إنجاز المعاملات أونلاين (عن بُعد)
+                    </h2>
+                    <p class="text-xs md:text-base text-slate-300 max-w-3xl mx-auto leading-relaxed">
+                        نوفر لكم إمكانية تقديم وإنجاز جميع المعاملات الحكومية الرسمية من مكانكم وفي أي وقت بكل سهولة وأمان تكتيكي عالي.
+                    </p>
+                </div>
+
+                <!-- 4 Steps Flow Chart -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    
+                    <!-- Step 1 -->
+                    <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-amber-500/30 relative flex flex-col items-center text-center space-y-3 card-hover">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center shadow-lg">
+                            1
+                        </div>
+                        <h3 class="font-bold text-base text-amber-300">إرسال المستندات</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            إرسال صور أو ملفات المستندات الرسمية المطلوبة عبر النموذج التفاعلي أدناه أو مباشرة عبر الواتساب.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-amber-500/30 relative flex flex-col items-center text-center space-y-3 card-hover">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center shadow-lg">
+                            2
+                        </div>
+                        <h3 class="font-bold text-base text-amber-300">المراجعة والتدقيق</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            يقوم فريقنا المستشار بتدقيق البيانات فورًا والتأكد من مطابقتها لاشتراطات الجهة الحكومية.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-amber-500/30 relative flex flex-col items-center text-center space-y-3 card-hover">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center shadow-lg">
+                            3
+                        </div>
+                        <h3 class="font-bold text-base text-amber-300">الدفع والتأكيد</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            سداد الرسوم عبر خيارات الدفع الإلكتروني الآمنة ومتابعة حالة المعاملة لحظة بلحظة.
+                        </p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-amber-500/30 relative flex flex-col items-center text-center space-y-3 card-hover">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h3 class="font-bold text-base text-emerald-300">استلام المعاملة</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            استلام الوثائق والمحررات المنجزة والمصدقة إلكترونياً أو توصيل النسخ الورقية إليكم.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Interactive Online Application Form -->
+                <div class="bg-slate-900/90 rounded-3xl p-6 md:p-8 border-2 border-amber-500/40 shadow-2xl no-print">
+                    <div class="flex items-center gap-3 border-b border-slate-700/80 pb-4 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">نموذج تقديم الطلب المباشر أونلاين</h3>
+                            <p class="text-xs text-slate-400">قم بتعبئة البيانات وسيقوم النظام بإنشاء محادثة واتساب موجهة ومجهزة بكافة تفاصيل طلبك</p>
+                        </div>
+                    </div>
+
+                    <form id="onlineOrderForm" onsubmit="submitOnlineForm(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            <!-- Customer Name -->
+                            <div>
+                                <label class="block text-xs font-bold text-amber-300 mb-1.5">الاسم الكامل / اسم الشركة <span class="text-rose-400">*</span></label>
+                                <input type="text" id="clientName" required placeholder="أدخل اسمك أو اسم الشركة" 
+                                       class="w-full bg-slate-800 text-white text-xs md:text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-amber-500 transition">
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div>
+                                <label class="block text-xs font-bold text-amber-300 mb-1.5">رقم التواصل / الواتساب <span class="text-rose-400">*</span></label>
+                                <input type="tel" id="clientPhone" required placeholder="+974 XXXX XXXX" dir="ltr"
+                                       class="w-full bg-slate-800 text-white text-xs md:text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-amber-500 transition text-right">
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            <!-- Service Category Dropdown -->
+                            <div>
+                                <label class="block text-xs font-bold text-amber-300 mb-1.5">نوع الخدمة المطلوب إنجازها أونلاين <span class="text-rose-400">*</span></label>
+                                <select id="serviceType" required class="w-full bg-slate-800 text-white text-xs md:text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-amber-500 transition">
+                                    <option value="" disabled selected>اختر الجهة / نوع المعاملة...</option>
+                                    <option value="وزارة التجارة والصناعة (تأسيس / سجل / رخصة)">وزارة التجارة والصناعة (تأسيس / سجل / رخصة)</option>
+                                    <option value="وزارة العمل (عقود / إشعار / تغيير جهة عمل)">وزارة العمل (عقود / إشعار / تغيير جهة عمل)</option>
+                                    <option value="وزارة الداخلية (سمات / إقامات / قيد منشأة / مرور)">وزارة الداخلية (سمات / إقامات / قيد منشأة / مرور)</option>
+                                    <option value="وزارة العدل (توثيق / تواكيل / خدمات عقارية)">وزارة العدل (توثيق / تواكيل / خدمات عقارية)</option>
+                                    <option value="النيابة العامة والقضاء (كف طلب / غرامات / شهادات)">النيابة العامة والقضاء (كف طلب / غرامات / شهادات)</option>
+                                    <option value="وزارة الصحة (قومسيون / شهادات صحية)">وزارة الصحة (قومسيون / شهادات صحية)</option>
+                                    <option value="وزارة البلدية (عقود إيجار / رخص إعلانات)">وزارة البلدية (عقود إيجار / رخص إعلانات)</option>
+                                    <option value="تصديقات الخارجية أو الهيئة العامة للضرائب">تصديقات الخارجية أو الهيئة العامة للضرائب</option>
+                                    <option value="معاملة حكومية أخرى">معاملة حكومية أخرى (اذكر التفاصيل)</option>
+                                </select>
+                            </div>
+
+                            <!-- Attachments File Input Placeholder -->
+                            <div>
+                                <label class="block text-xs font-bold text-amber-300 mb-1.5">إرفاق المستندات (اختر الملفات لإعدادها للواتساب)</label>
+                                <div class="relative">
+                                    <input type="file" id="documentFiles" multiple onchange="updateFileNames()" 
+                                           class="hidden">
+                                    <button type="button" onclick="document.getElementById('documentFiles').click()" 
+                                            class="w-full bg-slate-800 text-slate-300 text-xs rounded-xl px-4 py-3 border border-dashed border-slate-600 hover:border-amber-400 flex items-center justify-between transition">
+                                        <span id="fileNameDisplay" class="truncate">انقر لاختيار المستندات / الصور...</span>
+                                        <i class="fa-solid fa-paperclip text-amber-400"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Notes / Description -->
+                        <div>
+                            <label class="block text-xs font-bold text-amber-300 mb-1.5">تفاصيل تفصيلية للمعاملة أو ملاحظات إضافية</label>
+                            <textarea id="clientNotes" rows="2" placeholder="اكتب أي ملاحظات أو تفاصيل للمستشار حول رقم السجل أو الرقم الشخصي..." 
+                                      class="w-full bg-slate-800 text-white text-xs md:text-sm rounded-xl px-4 py-2.5 border border-slate-700 focus:outline-none focus:border-amber-500 transition"></textarea>
+                        </div>
+
+                        <!-- Submit CTA Button -->
+                        <div class="pt-2">
+                            <button type="submit" class="w-full gold-gradient hover:brightness-110 text-slate-950 font-black py-3.5 px-6 rounded-xl shadow-xl flex items-center justify-center gap-3 transition text-sm md:text-base">
+                                <i class="fa-brands fa-whatsapp text-xl text-emerald-900"></i>
+                                <span>إرسال الطلب المباشر وإنجاز المعاملة أونلاين عبر الواتساب</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Services Section Header Bar -->
+        <div class="bg-slate-100 px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg maroon-gradient flex items-center justify-center text-amber-400 font-bold shadow-md">
+                    <i class="fa-solid fa-layer-group text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-900">
+                        دليل جميع الخدمات الحكومية والرسمية (المتاحة أونلاين وحضوريًا)
+                    </h2>
+                    <p class="text-xs text-slate-500 font-medium">اختر أياً من القطاعات التالية لاستكمال معاملتك</p>
+                </div>
+            </div>
+            <div id="servicesCount" class="text-xs md:text-sm font-bold text-amber-900 bg-amber-100 border border-amber-300 px-3.5 py-1.5 rounded-lg shadow-sm">
+                متاح 8 قطاعات حكومية ورسمية
+            </div>
+        </div>
+
+        <!-- Main Services Grid Container -->
+        <main id="servicesGrid" class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- 1. وزارة العدل -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-amber-950 to-amber-900 text-white p-4 flex items-center gap-3 border-b-2 border-amber-500">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة العدل</h3>
+                        <p class="text-xs text-amber-200/80 font-medium">الخدمات العقارية والتوثيق الرسمي</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-4">
+                    <!-- الخدمات العقارية -->
+                    <div>
+                        <h4 class="text-xs font-black text-amber-950 bg-amber-100 px-2.5 py-1 rounded-md mb-2 border-r-4 border-amber-600 flex items-center gap-1.5">
+                            <i class="fa-solid fa-building text-amber-700"></i> الخدمات العقارية
+                        </h4>
+                        <ul class="text-xs md:text-sm text-slate-700 space-y-2 pr-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>خدمات نقل الملكية العقارية</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>خدمات حق الانتفاع</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>خدمات الحقوق المقيدة</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>خدمات تملك غير القطريين</span></li>
+                        </ul>
+                    </div>
+                    <!-- التوثيق -->
+                    <div>
+                        <h4 class="text-xs font-black text-amber-950 bg-amber-100 px-2.5 py-1 rounded-md mb-2 border-r-4 border-amber-600 flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-signature text-amber-700"></i> خدمات التوثيق
+                        </h4>
+                        <ul class="text-xs md:text-sm text-slate-700 space-y-2 pr-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>التصديق على التوقيع والتواكيل</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>خدمات التوثيق المتنوعة</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>الاستعلام عن محرر وثائق</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>إثبات تاريخ المحررات</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-600 text-[11px]"></i> <span>قبول وإيداع المحررات الموثقة أجنبياً</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. وزارة الداخلية -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="maroon-gradient text-white p-4 flex items-center gap-3 border-b-2 border-amber-500">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-passport"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة الداخلية</h3>
+                        <p class="text-xs text-amber-200/80 font-medium">الإقامات، السمات والخدمات المرورية</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1">
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-2.5 text-xs md:text-sm text-slate-700">
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>الاستقدام وسمات الدخول</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>نقل وتجديد الإقامات</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>الخدمات المرورية العامة</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>تراخيص الدفاع المدني</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>تراخيص النظم الأمنية</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>إشعار وتصاريح السفر</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>إصدار وتجديد قيد المنشأة</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>خدمات الموردين اعتماد</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>الأمن والتصاريح الخاصة</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>الشهادات والتقارير الأمنية</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>خدمة الإنذار المبكر</span></div>
+                        <div class="flex items-center gap-2"><i class="fa-solid fa-caret-left text-maroon-800"></i> <span>الاستعلامات العامة</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. وزارة العمل -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-sky-950 to-sky-900 text-white p-4 flex items-center gap-3 border-b-2 border-sky-500">
+                    <div class="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة العمل</h3>
+                        <p class="text-xs text-sky-200/80 font-medium">معاملات العمالة وتغيير جهة العمل</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-3 text-xs md:text-sm text-slate-700">
+                    <div class="border-b border-slate-200 pb-3">
+                        <span class="font-bold text-sky-950 block mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-contract text-sky-700"></i> عقود وإخطارات العمل:
+                        </span>
+                        <ul class="space-y-1.5 pr-2">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>التنازل المسبق عن فترة الإخطار</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>تصديق عقود مستخدمي المنازل</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>إخطار إنهاء العلاقة التعاقدية (عامل / صاحب عمل)</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>التنازل عن ترخيص مكتب استقدام</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="font-bold text-sky-950 block mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-people-arrows text-sky-700"></i> الإعارة وتغيير جهة العمل:
+                        </span>
+                        <ul class="space-y-1.5 pr-2">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>تغيير جهة العمل (داخل وخارج سوق العمل)</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>إلغاء أو طلب إعارة العمالة المنزلية</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1 text-[11px]"></i> <span>الالتحاق بالسوق للمقيمين وإصدار شهادات الراتب</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. وزارة التجارة والصناعة والنافذة الواحدة -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col md:col-span-2 lg:col-span-2 card-shadow">
+                <div class="bg-gradient-to-r from-emerald-950 to-emerald-900 text-white p-4 flex items-center gap-3 border-b-2 border-emerald-500">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-building-flag"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة التجارة والصناعة والنافذة الواحدة</h3>
+                        <p class="text-xs text-emerald-200/80 font-medium">تأسيس الشركات، السجلات التجارية والترخيص الفوري</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm text-slate-700">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+                        <h4 class="font-bold text-emerald-950 mb-2.5 pb-1 border-b border-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-store text-emerald-600"></i> <span>تأسيس الأعمال والتراخيص التجارية</span>
+                        </h4>
+                        <ul class="space-y-2 text-slate-700">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>تأسيس الأعمال الشامل وحجز الاسم التجاري</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>تأسيس واستكمال رخص المصانع والورش</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>إصدار الترخيص المنزلي ورخصة التجارة الإلكترونية</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>تجديد وتعديل ورخص عقود الشركات</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>إضافة الفروع، طلب الموظفين، وإغلاق الشركات</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+                        <h4 class="font-bold text-emerald-950 mb-2.5 pb-1 border-b border-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-file-contract text-emerald-600"></i> <span>السجلات والشهادات الرقمية</span>
+                        </h4>
+                        <ul class="space-y-2 text-slate-700">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>مستخرج السجل التجاري الفوري</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>شهادات عدم وجود رخص أو سجلات تجارية</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>إصدار وتجديد قيد المنشأة الرقمي</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>خدمات مستشار الأعمال وأهلية المستثمر الأجنبي</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-shield text-emerald-600 text-[10px] mt-1"></i> <span>خدمات الاستثمار والتجار الشاملة</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. النيابة العامة والمجلس الأعلى للقضاء -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-indigo-950 to-indigo-900 text-white p-4 flex items-center gap-3 border-b-2 border-indigo-500">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-gavel"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">النيابة العامة والقضاء</h3>
+                        <p class="text-xs text-indigo-200/80 font-medium">الخدمات القضائية ومتابعة القضايا</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-2.5 text-xs md:text-sm text-slate-700">
+                    <ul class="space-y-2.5">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-700"></i> <span>تقديم الطلبات القضائية والتنفيذية</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-700"></i> <span>متابعة حركة القضايا والخدمات الإلكترونية</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-700"></i> <span>طلبات كف الطلب ورفع منع السفر</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-700"></i> <span>شهادات عدم محكومية لمن يهمه الأمر</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-700"></i> <span>خدمات الاستعلام القضائي ودفع الغرامات</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 6. وزارة الصحة العامة -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-teal-950 to-teal-900 text-white p-4 flex items-center gap-3 border-b-2 border-teal-500">
+                    <div class="w-11 h-11 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة الصحة العامة</h3>
+                        <p class="text-xs text-teal-200/80 font-medium">القومسيون المعاملات والشهادات الصحية</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-2.5 text-xs md:text-sm text-slate-700">
+                    <ul class="space-y-2.5">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-teal-600"></i> <span>حجز مواعيد الفحص الطبي (القومسيون)</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-teal-600"></i> <span>تراخيص المنشآت الطبية والمهن الصحية</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-teal-600"></i> <span>الشهادات الصحية للعاملين بالأغذية</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-teal-600"></i> <span>معاملات التقييد الطبي وإعادة الفحص</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 7. وزارة البلدية -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-amber-900 to-amber-800 text-white p-4 flex items-center gap-3 border-b-2 border-amber-400">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-city"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">وزارة البلدية</h3>
+                        <p class="text-xs text-amber-200/80 font-medium">الرخص التجارية العقود وتراخيص المباني</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-2.5 text-xs md:text-sm text-slate-700">
+                    <ul class="space-y-2.5">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-amber-700"></i> <span>إصدار وتجديد الرخص التجارية للمحلات</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-amber-700"></i> <span>توثيق عقود إيجارات العقارات المعتمدة</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-amber-700"></i> <span>تراخيص البناء، الصيانة الهدم</span></li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-square-check text-amber-700"></i> <span>تصاريح الإعلانات وتفتيش المباني</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 8. الجهات الحكومية والخدمية الأخرى -->
+            <section class="service-card card-hover bg-slate-50/80 rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-shadow">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 flex items-center gap-3 border-b-2 border-amber-500">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-bold text-xl shadow-inner">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg leading-tight">خدمات حكومية إضافية</h3>
+                        <p class="text-xs text-slate-300 font-medium">الخارجية، الضرائب والتعليم</p>
+                    </div>
+                </div>
+                <div class="p-5 flex-1 space-y-2.5 text-xs md:text-sm text-slate-700">
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-star text-amber-500 text-xs mt-1"></i> <span><strong class="text-slate-900">وزارة الخارجية:</strong> تصديق الشهادات والوثائق الرسمية</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-star text-amber-500 text-xs mt-1"></i> <span><strong class="text-slate-900">الهيئة العامة للضرائب:</strong> الإقرارات والبطاقة الضريبية</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-star text-amber-500 text-xs mt-1"></i> <span><strong class="text-slate-900">كهرماء:</strong> توصيل ونقل ملكية العدادات</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-star text-amber-500 text-xs mt-1"></i> <span><strong class="text-slate-900">معادلة الشهادات:</strong> وزارة التربية والتعليم العالي</span></li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- No Results Found Placeholder -->
+        <div id="noResults" class="hidden p-12 text-center text-slate-500">
+            <i class="fa-solid fa-folder-open text-4xl mb-3 text-slate-300"></i>
+            <p class="font-bold text-base text-slate-700">لم يتم العثور على خدمات تطابق البحث</p>
+            <p class="text-xs text-slate-400 mt-1">يرجى المحاولة باستخدام كلمات بحث أخرى</p>
+        </div>
+
+        <!-- Footer / Contact & Interactive QR Section -->
+        <footer class="maroon-gradient text-white p-6 md:p-10 border-t-8 border-amber-500 page-break relative overflow-hidden">
+            <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                
+                <!-- Info & CTA -->
+                <div class="flex-1 text-center md:text-right space-y-4">
+                    <div class="inline-block bg-amber-500 text-slate-950 font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+                        تواصل معنا الآن لإنجاز معاملاتك بسهولة
+                    </div>
+
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-white">
+                        نختصر عليك الوقت والجهد بخبرة واحترافية متكاملة
+                    </h3>
+
+                    <p class="text-xs md:text-sm text-slate-200 max-w-2xl leading-relaxed">
+                        فريق متخصص في تخليص ومتابعة كافة المعاملات الحكومية والتجارية بدقة متناهية وسرعة فائقة. يسعدنا استقبالكم في مقرنا أو تقديم الخدمة أونلاين عبر التواصل الفوري.
+                    </p>
+
+                    <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start text-xs font-bold">
+                        <div class="flex items-center gap-2 bg-slate-950/40 px-4 py-2.5 rounded-xl border border-amber-500/30">
+                            <i class="fa-solid fa-location-dot text-amber-400"></i>
+                            <span>دولة قطر - الدوحة</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-950/40 px-4 py-2.5 rounded-xl border border-amber-500/30">
+                            <i class="fa-solid fa-phone text-amber-400"></i>
+                            <span dir="ltr" style="unicode-bidi: isolate;">+974 70340999</span>
+                        </div>
+                        <a href="https://wa.me/97470340999" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl border border-emerald-400 text-white transition shadow-lg">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>تواصل مباشر عبر الواتساب</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dynamic QR Code Card -->
+                <div class="flex flex-col items-center justify-center bg-white p-5 rounded-3xl shadow-2xl text-slate-900 border-4 border-amber-400 min-w-[220px]">
+                    
+                    <div class="w-36 h-36 bg-slate-50 rounded-xl p-2 flex items-center justify-center border border-slate-200 relative">
+                        <div id="qrcode"></div>
+                    </div>
+
+                    <span class="text-xs font-black text-amber-950 mt-3 text-center">امسح الرمز للتواصل السريع</span>
+                    <span class="text-[10px] text-slate-500 font-bold mt-0.5">مركز الشامل - قطر</span>
+                </div>
+
+            </div>
+
+            <!-- Copyright Line -->
+            <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-300 gap-2">
+                <span>جميع الحقوق محفوظة © مركز الشامل لتخليص المعاملات الحكومية 2026</span>
+                <span class="text-amber-400 font-semibold">دقة • سرعة • احترافية</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Generate Dynamic QR Code
+        window.onload = function() {
+            var qrContainer = document.getElementById("qrcode");
+            if (qrContainer) {
+                new QRCode(qrContainer, {
+                    text: "https://wa.me/97470340999?text=" + encodeURIComponent("مرحباً مركز الشامل، أرغب في الاستفسار عن إنجاز معاملة أونلاين."),
+                    width: 128,
+                    height: 128,
+                    colorDark : "#701c34",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+        };
+
+        // Real-time Service Search
+        function filterServices() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var cards = document.getElementsByClassName('service-card');
+            var visibleCount = 0;
+
+            for (var i = 0; i < cards.length; i++) {
+                var text = cards[i].innerText || cards[i].textContent;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                    visibleCount++;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+
+            var noResults = document.getElementById('noResults');
+            var servicesCount = document.getElementById('servicesCount');
+
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            servicesCount.innerText = 'المعروض: ' + visibleCount + ' قطاع من أصل 8';
+        }
+
+        // File names display handler
+        function updateFileNames() {
+            const fileInput = document.getElementById('documentFiles');
+            const display = document.getElementById('fileNameDisplay');
+            if (fileInput.files.length > 0) {
+                if (fileInput.files.length === 1) {
+                    display.innerText = 'تم إرفاق: ' + fileInput.files[0].name;
+                } else {
+                    display.innerText = 'تم اختيار ' + fileInput.files.length + ' ملفات جاهزة للارسال';
+                }
+            } else {
+                display.innerText = 'انقر لاختيار المستندات / الصور...';
+            }
+        }
+
+        // Form Submission to WhatsApp Link Builder
+        function submitOnlineForm(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const service = document.getElementById('serviceType').value;
+            const notes = document.getElementById('clientNotes').value.trim();
+            const files = document.getElementById('documentFiles').files;
+
+            let fileMessage = "لا يوجد ملفات مرفقة فورية.";
+            if (files.length > 0) {
+                fileMessage = `مرفق عدد (${files.length}) مستندات جاهزة للشحن.`;
+            }
+
+            let message = `*طلب إنجاز معاملة أونلاين - مركز الشامل*\n\n`;
+            message += `👤 *الاسم/الشركة:* ${name}\n`;
+            message += `📞 *رقم التواصل:* ${phone}\n`;
+            message += `🏛️ *نوع الخدمة المطلوبة:* ${service}\n`;
+            if (notes) {
+                message += `📝 *ملاحظات وتفاصيل:* ${notes}\n`;
+            }
+            message += `📁 *المستندات:* ${fileMessage}\n\n`;
+            message += `_تم إرسال هذا الطلب عبر منصة الشامل الإلكترونية_`;
+
+            const whatsappUrl = `https://wa.me/97470340999?text=${encodeURIComponent(message)}`;
+            
+            showToast("جاري توجيهك إلى الواتساب مع البيانات المدخلة...");
+            
+            setTimeout(() => {
+                window.open(whatsappUrl, '_blank');
+            }, 1000);
+        }
+
+        // Copy Contact Number to Clipboard
+        function copyContactInfo() {
+            const textToCopy = "+974 70340999";
+            const textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("تم نسخ رقم التواصل (+974 70340999) بنجاح!");
+            } catch (err) {
+                showToast("حدث خطأ أثناء نسخ الرقم");
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // Display Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
